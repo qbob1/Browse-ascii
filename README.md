@@ -4,11 +4,17 @@ An interactive web application for browsing, categorizing, and organizing Unicod
 
 ## Features
 
-### 🔤 Interactive Character Grid
-- Browse Unicode characters by range
+### 🔤 Interactive Character Grid (Canvas-Based)
+- **High-performance HTML5 Canvas rendering**
+- **Infinite zoom** (0.1x to 10x) with smooth scaling
+- **Pan and drag** navigation with mouse or touch
+- **Scroll wheel zoom** centered on cursor position
+- Browse up to 10,000 characters per range (increased capacity)
 - Pre-configured ranges for common scripts (Latin, Greek, Cyrillic, CJK, etc.)
 - Custom range selector for specific Unicode blocks
-- Visual grid display using GNU Unifont
+- HiDPI/Retina display support for crisp rendering
+- Hover tooltips showing character info and category
+- Viewport culling for optimal performance
 
 ### 🏷️ Character Categorization
 - Create custom categories with names and descriptions
@@ -58,18 +64,26 @@ An interactive web application for browsing, categorizing, and organizing Unicod
    - Customize colors and add notes
    - Save your categorization (applies to all selected characters in batch mode)
 
-3. **Create Groups**
+3. **Navigate and Zoom**
+   - **Drag to pan**: Click and drag anywhere on the grid to move around
+   - **Scroll to zoom**: Use mouse wheel to zoom in/out (zooms toward cursor)
+   - **Zoom buttons**: Use +/- buttons in bottom-right corner
+   - **Reset view**: Click the home (⌂) button to reset zoom and position
+   - **Hover for info**: Hover over any character to see its details
+   - Supports both mouse and touch gestures for mobile devices
+
+4. **Create Groups**
    - Enable "Multi-Select Mode"
    - Click multiple characters to select them
    - Click "Create Group from Selection"
    - Name your group and add notes
 
-4. **Export Your Work**
+5. **Export Your Work**
    - Click "Export State" to download a JSON file
    - The export includes all categories, character data, and groups
    - Includes metadata like character counts and creation dates
 
-5. **Import Previous Work**
+6. **Import Previous Work**
    - Click "Import State"
    - Select a previously exported JSON file
    - All your categories and data will be restored
@@ -92,8 +106,16 @@ Browse-ascii/
 
 ### Web Components
 The application uses native Web Components (Custom Elements) for modularity:
-- `<unicode-grid>` - Renders the character grid
+- `<unicode-grid>` - Canvas-based character grid with zoom and pan
 - `<categorization-menu>` - Modal dialog for categorization
+
+### Canvas Rendering
+The grid uses HTML5 Canvas for high-performance rendering:
+- Viewport culling: Only visible characters are drawn
+- DPI scaling: Automatic adjustment for Retina/HiDPI displays
+- Event handling: Precise click detection with coordinate transformation
+- Efficient redraws: Only updates when state changes
+- Smooth animations: 60fps panning and zooming
 
 ### State Management
 - Centralized state management using a singleton StateManager
@@ -166,6 +188,15 @@ This application is designed to work seamlessly with GitHub Pages:
 
 No build process required - it's pure HTML, CSS, and vanilla JavaScript!
 
+## Navigation Controls
+
+- **Mouse Drag** - Pan the grid in any direction
+- **Mouse Wheel** - Zoom in/out (centered on cursor)
+- **Click + or −** - Zoom buttons in bottom-right corner
+- **Click ⌂** - Reset zoom and position
+- **Hover** - See character info in tooltip
+- **Touch Drag** - Pan on mobile devices
+
 ## Keyboard Shortcuts
 
 - `Esc` - Close categorization modal
@@ -173,22 +204,26 @@ No build process required - it's pure HTML, CSS, and vanilla JavaScript!
 
 ## Tips
 
-1. **Performance**: The grid displays up to 1024 characters at once for optimal performance
-2. **Organization**: Use categories for broad classifications and groups for related character sequences
-3. **Backup**: Regularly export your state to preserve your work
-4. **Colors**: Use distinct colors for categories to easily identify them in the grid
-5. **Notes**: Add detailed notes to remember why you categorized specific characters
+1. **Performance**: Canvas rendering now supports up to 10,000 characters with smooth 60fps scrolling
+2. **Zooming**: Zoom in close to see character details, or zoom out for an overview
+3. **Organization**: Use categories for broad classifications and groups for related character sequences
+4. **Navigation**: Drag to explore large Unicode ranges easily
+5. **Backup**: Regularly export your state to preserve your work
+6. **Colors**: Use distinct colors for categories to easily identify them in the grid
+7. **Notes**: Add detailed notes to remember why you categorized specific characters
+8. **Mobile**: Touch gestures work great on tablets and phones
 
 ## Future Enhancements
 
 Possible additions:
 - Search and filter functionality
-- Bulk categorization operations
 - Category hierarchies
 - Character comparison view
 - Multiple grid views side-by-side
 - Collaborative categorization (cloud sync)
 - Advanced Unicode property filters
+- Pinch-to-zoom gesture support
+- Minimap navigator for large ranges
 
 ## Credits
 
