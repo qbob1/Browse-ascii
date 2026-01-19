@@ -256,7 +256,9 @@ header h1 {
 .grid-container {
     flex: 1;
     padding: 1.5rem;
-    overflow-y: auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .grid-controls {
@@ -265,78 +267,113 @@ header h1 {
     margin-bottom: 1rem;
 }
 
-/* Unicode Grid Component Styles */
+/* Unicode Grid Component Styles - Canvas-based */
 unicode-grid {
     display: block;
+    flex: 1;
 }
 
-.unicode-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
-    gap: 4px;
-    padding: 1rem;
+.canvas-grid-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 500px;
     background-color: var(--surface-color);
     border-radius: 8px;
+    overflow: hidden;
 }
 
-.char-cell {
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--bg-color);
-    border: 2px solid var(--border-color);
-    border-radius: 4px;
-    font-family: 'Unifont', monospace;
-    font-size: 1.5rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
+#unicode-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: grab;
     user-select: none;
 }
 
-.char-cell:hover {
-    border-color: var(--primary-color);
-    transform: scale(1.05);
-    z-index: 10;
+#unicode-canvas:active {
+    cursor: grabbing;
 }
 
-.char-cell.selected {
-    border-color: var(--selected-color);
-    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.5);
-}
-
-.char-cell.categorized::after {
-    content: '';
+/* Zoom Controls */
+.zoom-controls {
     position: absolute;
-    bottom: 2px;
-    right: 2px;
-    width: 8px;
-    height: 8px;
-    background-color: var(--success-color);
-    border-radius: 50%;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    background-color: rgba(45, 45, 45, 0.95);
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-.char-cell.in-group::before {
-    content: '';
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    width: 8px;
-    height: 8px;
-    background-color: var(--secondary-color);
-    border-radius: 50%;
+.zoom-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.char-info {
+.zoom-btn:hover {
+    background-color: var(--hover-color);
+    color: var(--primary-color);
+}
+
+.zoom-btn:active {
+    transform: scale(0.95);
+}
+
+#zoom-level {
+    min-width: 50px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+/* Canvas Info Display */
+.canvas-info {
     position: absolute;
-    bottom: -20px;
+    top: 20px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 0.7rem;
-    color: #999;
-    white-space: nowrap;
+    background-color: rgba(45, 45, 45, 0.95);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     pointer-events: none;
+    font-family: 'Unifont', monospace;
+    font-size: 1rem;
+    color: var(--text-color);
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+}
+
+#hover-info {
+    white-space: nowrap;
+}
+
+/* Legacy DOM-based grid (hidden but kept for reference) */
+.unicode-grid {
+    display: none;
+}
+
+.char-cell {
+    display: none;
 }
 
 /* Categorization Menu Component Styles */
