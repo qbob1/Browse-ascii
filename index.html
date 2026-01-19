@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GNU Unifont Character Categorizer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Unifont&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>GNU Unifont Character Categorizer</h1>
+            <div class="header-controls">
+                <div class="range-selector">
+                    <label for="unicode-range">Unicode Range:</label>
+                    <select id="unicode-range">
+                        <option value="0000-007F">Basic Latin (0000-007F)</option>
+                        <option value="0080-00FF">Latin-1 Supplement (0080-00FF)</option>
+                        <option value="0100-017F">Latin Extended-A (0100-017F)</option>
+                        <option value="0180-024F">Latin Extended-B (0180-024F)</option>
+                        <option value="0370-03FF">Greek and Coptic (0370-03FF)</option>
+                        <option value="0400-04FF">Cyrillic (0400-04FF)</option>
+                        <option value="0530-058F">Armenian (0530-058F)</option>
+                        <option value="0590-05FF">Hebrew (0590-05FF)</option>
+                        <option value="0600-06FF">Arabic (0600-06FF)</option>
+                        <option value="0900-097F">Devanagari (0900-097F)</option>
+                        <option value="1000-109F">Myanmar (1000-109F)</option>
+                        <option value="2000-206F">General Punctuation (2000-206F)</option>
+                        <option value="2070-209F">Superscripts and Subscripts (2070-209F)</option>
+                        <option value="2190-21FF">Arrows (2190-21FF)</option>
+                        <option value="2200-22FF">Mathematical Operators (2200-22FF)</option>
+                        <option value="2300-23FF">Miscellaneous Technical (2300-23FF)</option>
+                        <option value="2500-257F">Box Drawing (2500-257F)</option>
+                        <option value="2580-259F">Block Elements (2580-259F)</option>
+                        <option value="25A0-25FF">Geometric Shapes (25A0-25FF)</option>
+                        <option value="2600-26FF">Miscellaneous Symbols (2600-26FF)</option>
+                        <option value="3040-309F">Hiragana (3040-309F)</option>
+                        <option value="30A0-30FF">Katakana (30A0-30FF)</option>
+                        <option value="4E00-4EFF">CJK Unified Ideographs (4E00-4EFF)</option>
+                        <option value="AC00-ACFF">Hangul Syllables (AC00-ACFF)</option>
+                        <option value="custom">Custom Range...</option>
+                    </select>
+                </div>
+                <div class="custom-range" style="display: none;">
+                    <input type="text" id="custom-start" placeholder="Start (hex)" pattern="[0-9A-Fa-f]{4,6}">
+                    <span>to</span>
+                    <input type="text" id="custom-end" placeholder="End (hex)" pattern="[0-9A-Fa-f]{4,6}">
+                    <button id="apply-custom">Apply</button>
+                </div>
+                <button id="export-state" class="btn-primary">Export State</button>
+                <button id="import-state" class="btn-secondary">Import State</button>
+                <input type="file" id="import-file" accept=".json" style="display: none;">
+            </div>
+        </header>
+
+        <div class="main-content">
+            <aside class="sidebar">
+                <div class="categories-panel">
+                    <h2>Categories</h2>
+                    <button id="new-category" class="btn-primary">+ New Category</button>
+                    <div id="categories-list"></div>
+                </div>
+
+                <div class="groups-panel">
+                    <h2>Groups</h2>
+                    <button id="new-group" class="btn-primary">+ Create Group from Selection</button>
+                    <div id="groups-list"></div>
+                </div>
+
+                <div class="selection-info">
+                    <h3>Selection Info</h3>
+                    <div id="selection-details">
+                        <p>No characters selected</p>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="grid-container">
+                <div class="grid-controls">
+                    <button id="select-mode" class="btn-toggle">Multi-Select Mode: OFF</button>
+                    <button id="clear-selection" class="btn-secondary">Clear Selection</button>
+                </div>
+                <unicode-grid></unicode-grid>
+            </main>
+        </div>
+    </div>
+
+    <!-- Categorization Modal -->
+    <categorization-menu></categorization-menu>
+
+    <!-- Scripts -->
+    <script type="module" src="js/state-manager.js"></script>
+    <script type="module" src="js/unicode-grid.js"></script>
+    <script type="module" src="js/categorization-menu.js"></script>
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
