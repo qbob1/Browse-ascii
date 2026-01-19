@@ -9,7 +9,10 @@ class CategorizationMenu extends HTMLElement {
     constructor() {
         super();
         this.currentCodepoint = null;
+        this.currentCodepoints = [];
         this.currentCharData = null;
+        this.animationInterval = null;
+        this.animationIndex = 0;
     }
 
     connectedCallback() {
@@ -22,13 +25,17 @@ class CategorizationMenu extends HTMLElement {
             <div class="modal-overlay" style="display: none;">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h2>Categorize Character</h2>
+                        <h2 id="modal-title">Categorize Character</h2>
                         <button class="close-btn" id="close-modal">&times;</button>
                     </div>
 
                     <div class="character-display">
                         <div class="character-preview" id="char-preview"></div>
                         <div class="character-code" id="char-code"></div>
+                        <div class="animation-controls" id="animation-controls" style="display: none;">
+                            <button class="btn-secondary" id="toggle-animation">⏸ Pause</button>
+                            <span id="animation-info"></span>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -146,6 +153,11 @@ class CategorizationMenu extends HTMLElement {
                 }
             }
         });
+
+        // Animation toggle
+        this.querySelector('#toggle-animation').addEventListener('click', () => {
+            this.toggleAnimation();
+        });
     }
 
     toggleNewCategoryForm(show) {
@@ -212,14 +224,36 @@ class CategorizationMenu extends HTMLElement {
         }
     }
 
-    open(codepoint) {
-        this.currentCodepoint = codepoint;
-        this.currentCharData = stateManager.getCharacterData(codepoint);
+    open(codepointOrArray) {
+        // Handle both single codepoint and array of codepoints
+        if (Array.isArray(codepointOrArray)) {
+            this.currentCodepoints = codepointOrArray;
+            this.currentCodepoint = null;
+            this.openMultiple();
+        } else {
+            this.currentCodepoint = codepointOrArray;
+            this.currentCodepoints = [];
+            this.openSingle();
+        }
+
+        // Show modal
+        this.querySelector('.modal-overlay').style.display = 'flex';
+        this.classList.add('visible');
+    }
+
+    openSingle() {
+        this.currentCharData = stateManager.getCharacterData(this.currentCodepoint);
+
+        // Update title
+        this.querySelector('#modal-title').textContent = 'Categorize Character';
 
         // Update character display
-        const char = String.fromCodePoint(codepoint);
+        const char = String.fromCodePoint(this.currentCodepoint);
         this.querySelector('#char-preview').textContent = char;
-        this.querySelector('#char-code').textContent = `U+${codepoint.toString(16).toUpperCase().padStart(4, '0')}`;
+        this.querySelector('#char-code').textContent = `U+${this.currentCodepoint.toString(16).toUpperCase().padStart(4, '0')}`;
+
+        // Hide animation controls
+        this.querySelector('#animation-controls').style.display = 'none';
 
         // Update category list
         this.updateCategoryList();
@@ -239,16 +273,80 @@ class CategorizationMenu extends HTMLElement {
             this.querySelector('#remove-cat-btn').style.display = 'none';
         }
 
-        // Show modal
-        this.querySelector('.modal-overlay').style.display = 'flex';
-        this.classList.add('visible');
+        // Update notes label
+        this.querySelector('label[for="char-notes"]').textContent = 'Notes';
+    }
+
+    openMultiple() {
+        // Update title
+        this.querySelector('#modal-title').textContent = `Categorize ${this.currentCodepoints.length} Characters`;
+
+        // Show animation controls
+        this.querySelector('#animation-controls').style.display = 'flex';
+        this.querySelector('#animation-info').textContent = `1 of ${this.currentCodepoints.length}`;
+
+        // Start animation
+        this.startAnimation();
+
+        // Update category list
+        this.updateCategoryList();
+
+        // Clear form fields for batch categorization
+        this.querySelector('#category-select').value = '';
+        this.querySelector('#char-bg').value = '#2d2d2d';
+        this.querySelector('#char-text').value = '#e0e0e0';
+        this.querySelector('#char-notes').value = '';
+        this.querySelector('#remove-cat-btn').style.display = 'block';
+        this.querySelector('#remove-cat-btn').textContent = 'Remove All Categorizations';
+
+        // Update notes label
+        this.querySelector('label[for="char-notes"]').textContent = 'Notes (applied to all)';
+    }
+
+    startAnimation() {
+        this.animationIndex = 0;
+        this.updateAnimationFrame();
+
+        this.animationInterval = setInterval(() => {
+            this.animationIndex = (this.animationIndex + 1) % this.currentCodepoints.length;
+            this.updateAnimationFrame();
+        }, 250); // 0.25s between frames
+
+        this.querySelector('#toggle-animation').textContent = '⏸ Pause';
+    }
+
+    updateAnimationFrame() {
+        const codepoint = this.currentCodepoints[this.animationIndex];
+        const char = String.fromCodePoint(codepoint);
+
+        this.querySelector('#char-preview').textContent = char;
+        this.querySelector('#char-code').textContent = `U+${codepoint.toString(16).toUpperCase().padStart(4, '0')}`;
+        this.querySelector('#animation-info').textContent = `${this.animationIndex + 1} of ${this.currentCodepoints.length}`;
+    }
+
+    stopAnimation() {
+        if (this.animationInterval) {
+            clearInterval(this.animationInterval);
+            this.animationInterval = null;
+        }
+    }
+
+    toggleAnimation() {
+        if (this.animationInterval) {
+            this.stopAnimation();
+            this.querySelector('#toggle-animation').textContent = '▶ Play';
+        } else {
+            this.startAnimation();
+        }
     }
 
     close() {
+        this.stopAnimation();
         this.querySelector('.modal-overlay').style.display = 'none';
         this.classList.remove('visible');
         this.toggleNewCategoryForm(false);
         this.currentCodepoint = null;
+        this.currentCodepoints = [];
         this.currentCharData = null;
     }
 
@@ -263,20 +361,44 @@ class CategorizationMenu extends HTMLElement {
             return;
         }
 
-        stateManager.categorizeCharacter(
-            this.currentCodepoint,
-            categoryId,
-            notes,
-            { bgColor, textColor }
-        );
+        if (this.currentCodepoints.length > 0) {
+            // Batch categorization
+            this.currentCodepoints.forEach(codepoint => {
+                stateManager.categorizeCharacter(
+                    codepoint,
+                    categoryId,
+                    notes,
+                    { bgColor, textColor }
+                );
+            });
+        } else {
+            // Single categorization
+            stateManager.categorizeCharacter(
+                this.currentCodepoint,
+                categoryId,
+                notes,
+                { bgColor, textColor }
+            );
+        }
 
         this.close();
     }
 
     removeCategorization() {
-        if (confirm('Remove categorization from this character?')) {
-            stateManager.uncategorizeCharacter(this.currentCodepoint);
-            this.close();
+        if (this.currentCodepoints.length > 0) {
+            // Batch removal
+            if (confirm(`Remove categorization from ${this.currentCodepoints.length} characters?`)) {
+                this.currentCodepoints.forEach(codepoint => {
+                    stateManager.uncategorizeCharacter(codepoint);
+                });
+                this.close();
+            }
+        } else {
+            // Single removal
+            if (confirm('Remove categorization from this character?')) {
+                stateManager.uncategorizeCharacter(this.currentCodepoint);
+                this.close();
+            }
         }
     }
 }

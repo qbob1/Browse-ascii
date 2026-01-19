@@ -483,6 +483,27 @@ categorization-menu.visible {
     flex: 1;
 }
 
+/* Animation controls */
+.animation-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 0.5rem;
+    background-color: var(--bg-color);
+    border-radius: 4px;
+    justify-content: center;
+}
+
+.animation-controls button {
+    padding: 0.4rem 1rem;
+}
+
+#animation-info {
+    font-size: 0.9rem;
+    color: #999;
+}
+
 /* Group details */
 .group-characters {
     font-family: 'Unifont', monospace;

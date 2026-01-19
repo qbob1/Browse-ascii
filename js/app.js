@@ -17,6 +17,7 @@ function initializeApp() {
     const customRangeDiv = document.querySelector('.custom-range');
     const selectModeBtn = document.getElementById('select-mode');
     const clearSelectionBtn = document.getElementById('clear-selection');
+    const categorizeSelectionBtn = document.getElementById('categorize-selection');
     const newCategoryBtn = document.getElementById('new-category');
     const newGroupBtn = document.getElementById('new-group');
     const exportBtn = document.getElementById('export-state');
@@ -80,6 +81,14 @@ function initializeApp() {
     // Clear selection
     clearSelectionBtn.addEventListener('click', () => {
         stateManager.clearSelection();
+    });
+
+    // Categorize selection
+    categorizeSelectionBtn.addEventListener('click', () => {
+        const selectedChars = stateManager.getSelectedCharacters();
+        if (selectedChars.length > 0) {
+            categorizationMenu.open(selectedChars);
+        }
     });
 
     // Character selection from grid
@@ -244,11 +253,20 @@ function updateGroupsList(state) {
 
 function updateSelectionInfo(state) {
     const selectionDetails = document.getElementById('selection-details');
+    const categorizeSelectionBtn = document.getElementById('categorize-selection');
     const selectedChars = Array.from(state.selectedCharacters);
 
     if (selectedChars.length === 0) {
         selectionDetails.innerHTML = '<p>No characters selected</p>';
+        if (categorizeSelectionBtn) {
+            categorizeSelectionBtn.style.display = 'none';
+        }
         return;
+    }
+
+    // Show categorize button if characters are selected
+    if (categorizeSelectionBtn && selectedChars.length > 0) {
+        categorizeSelectionBtn.style.display = 'inline-block';
     }
 
     const charsString = selectedChars.map(cp => String.fromCodePoint(cp)).join('');
