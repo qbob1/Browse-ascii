@@ -13,8 +13,10 @@ An interactive web application for browsing, categorizing, and organizing Unicod
 ### 🏷️ Character Categorization
 - Create custom categories with names and descriptions
 - Customize background and text colors for each category
-- Apply categories to individual characters
-- Add notes to categorized characters
+- Apply categories to individual characters or batches
+- **Batch categorization** with animated sequence preview
+- Animated character display (0.25s intervals) with play/pause controls
+- Add notes to categorized characters (applied to all in batch mode)
 - Visual indicators for categorized characters
 
 ### 👥 Character Grouping
@@ -45,10 +47,16 @@ An interactive web application for browsing, categorizing, and organizing Unicod
    - Or select "Custom Range" to specify your own start and end codepoints
 
 2. **Categorize Characters**
-   - Click on any character to open the categorization menu
+   - **Single character**: Click on any character to open the categorization menu
+   - **Multiple characters**:
+     - Enable "Multi-Select Mode"
+     - Click multiple characters to select them
+     - Click "Categorize Selection" to open the batch categorization menu
+     - Watch the animated sequence preview (0.25s intervals between characters)
+     - Play/pause the animation as needed
    - Create a new category or select an existing one
    - Customize colors and add notes
-   - Save your categorization
+   - Save your categorization (applies to all selected characters in batch mode)
 
 3. **Create Groups**
    - Enable "Multi-Select Mode"
